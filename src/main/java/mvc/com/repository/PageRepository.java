@@ -1,6 +1,6 @@
 package mvc.com.repository;
 
-import com.tms.books.model.Page;
+import mvc.com.model.Page;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
