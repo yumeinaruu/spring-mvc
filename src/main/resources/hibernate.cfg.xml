@@ -18,6 +18,7 @@
         <mapping class="mvc.com.model.Author"/>
         <mapping class="mvc.com.model.Book"/>
         <mapping class="mvc.com.model.Page"/>
+        <mapping class="mvc.com.model.User"/>
 
     </session-factory>
 </hibernate-configuration>
