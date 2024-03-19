@@ -16,7 +16,7 @@ public class BookRepository {
         sessionFactory = new Configuration().configure().buildSessionFactory();
     }
 
-    public ArrayList<Book> getAllBooks(){
+    public ArrayList<Book> getAllBooks() {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         Query<Book> query = session.createQuery("from books", Book.class);
@@ -26,16 +26,16 @@ public class BookRepository {
         return list;
     }
 
-    public Book getBookById(int id){
+    public Book getBookById(int id) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
-        Book book = session.get(Book.class,id);
+        Book book = session.get(Book.class, id);
         session.getTransaction().commit();
         session.close();
         return book;
     }
 
-    public void createBook(Book book){
+    public void createBook(Book book) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         session.save(book);
@@ -43,7 +43,7 @@ public class BookRepository {
         session.close();
     }
 
-    public void updateBook(Book book){
+    public void updateBook(Book book) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         session.saveOrUpdate(book);
@@ -51,7 +51,7 @@ public class BookRepository {
         session.close();
     }
 
-    public void deleteBook(Book book){
+    public void deleteBook(Book book) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         session.delete(book);

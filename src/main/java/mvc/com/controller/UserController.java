@@ -6,9 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Controller //mvc схемы где есть страницы
@@ -22,15 +28,52 @@ public class UserController {
     }
 
     @GetMapping
-    public String getAllUsers(ModelMap modelMap) {
+    public ModelAndView getAllUsers(ModelAndView modelAndView) {
         List<User> users = userService.getAllUsers();
-        modelMap.addAttribute("users", users);
-        return users.isEmpty() ? "empty" : "get_all_users";
+        modelAndView.setViewName(users.isEmpty() ? "empty" : "get_users");
+        modelAndView.addObject("users", users);
+        return modelAndView;
     }
 
-    @GetMapping("/hello") //http GET method
+    //@RequestMapping(method = RequestMethod.GET, value = "/{id}")//гетмаппинг проще
+    @GetMapping(value = "/{id}")
+    public String getUserById(@PathVariable("id") Long id, ModelMap modelMap) { // аннотация если мы хотим достать что-то из url
+        Optional<User> user = userService.getUserById(id);
+        if (user.isPresent()) {
+            modelMap.addAttribute("user", user.get());
+            return "get_user_by_id";
+        }
+        return "empty";
+    }
+
+    @PostMapping("/{id}")
+    public String deleteByUserId(@PathVariable("id") Long id, ModelMap modelMap) {
+        return userService.deleteUserById(id) ? "success" : "failure";
+    }
+
+/*    @PostMapping
+    public String createUser(@RequestBody User user) { //в запросе придет тело JSON
+        return userService.createUser(user) ? "success" : "failure";
+    }*/
+
+    @PostMapping
+    public String createUser(@RequestParam("username") String username,
+                             @RequestParam("password") String password,
+                             @RequestParam("age") Integer age) {
+        return userService.createUser(username, password, age) ? "success" : "failure";
+    }
+
+    @PostMapping("/update")
+    public String updateUser(@RequestParam("username") String username,
+                             @RequestParam("password") String password,
+                             @RequestParam("id") Long id,
+                             @RequestParam("age") Integer age) {
+        return userService.updateUser(id, username, password, age) ? "success" : "failure";
+    }
+
+/*    @GetMapping("/hello") //http GET method
     public String helloPage() {
         boolean ok = new Random().nextBoolean();
         return ok ? "success" : "failure";
-    }
+    }*/
 }

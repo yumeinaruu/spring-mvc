@@ -5,13 +5,13 @@
     <title>All Users</title>
 </head>
 <body>
-<c:forEach items="${users}" var="user">
-    <h6>${user.id}</h6>
-    <h6>${user.username}</h6>
-    <h6>${user.userPassword}</h6>
-    <h6>${user.created}</h6>
-    <h6>${user.changed}</h6>
-    <h6>${user.age}</h6>
+<c:forEach items="${users}" var="users">
+    <h6>${users.id}</h6>
+    <h6>${users.username}</h6>
+    <h6>${users.userPassword}</h6>
+    <h6>${users.created}</h6>
+    <h6>${users.changed}</h6>
+    <h6>${users.age}</h6>
     <h3>----------------------</h3>
 </c:forEach>
 </body>

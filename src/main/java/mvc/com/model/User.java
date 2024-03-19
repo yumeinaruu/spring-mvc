@@ -10,9 +10,11 @@ import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 
+@Component
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
