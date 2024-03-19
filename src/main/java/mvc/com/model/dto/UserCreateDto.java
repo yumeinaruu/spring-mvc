@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import mvc.com.annotations.Adult;
 import org.springframework.stereotype.Component;
 
 @Data
@@ -19,7 +20,7 @@ public class UserCreateDto {
     private String userPassword;
 
     @NotNull
-    @Min(18)
+    @Adult
     @Max(100)
     private Integer age;
 }
