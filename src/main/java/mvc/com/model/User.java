@@ -42,24 +42,6 @@ public class User {
     @GeneratedValue(generator = "userSeqGen")
     private Long id;
 
-    /*@NotNull
-    @Email
-    @Size(min = 10, max = 20)
-    @AssertFalse// тру или фолс лежит
-    @AssertTrue*/
-   /* @DecimalMax("10.3")
-    @DecimalMin("10.3")
-    @Digits(integer = 3, fraction = 1) -число целое и его дробная часть
-    @Future - время в будущем
-    @FutureOrPresent - время в будущем или настоящем
-    @Past - время в прошлом
-    @PastOrPresent - понятно
-    @Max(100) - макс число
-    @Min(18) - мин
-    @Negative - с минусом
-    @NegativeOrZero - с минусом или ноль
-    @Pattern(regexp = "[a-z]+") - реджекс
-    */
     @Column(name = "username", unique = true)
     private String username;
 

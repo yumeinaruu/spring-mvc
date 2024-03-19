@@ -3,6 +3,7 @@ package mvc.com.service;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import mvc.com.model.Book;
 import mvc.com.model.User;
+import mvc.com.model.dto.UserCreateDto;
 import mvc.com.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,10 +36,10 @@ public class UserService {
         return userRepository.deleteUser(id);
     }
 
-    public Boolean createUser(String username, String password, Integer age) {
-        user.setUsername(username);
-        user.setUserPassword(password);
-        user.setAge(age);
+    public Boolean createUser(UserCreateDto userFromDto) {
+        user.setUserPassword(userFromDto.getUserPassword());
+        user.setUsername(userFromDto.getUsername());
+        user.setAge(userFromDto.getAge());
         user.setCreated(Timestamp.valueOf(LocalDateTime.now()));
         user.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         return userRepository.createUser(user);
