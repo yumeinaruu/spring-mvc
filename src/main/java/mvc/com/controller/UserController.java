@@ -1,14 +1,19 @@
 package mvc.com.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import mvc.com.exceptions.ValidationException;
 import mvc.com.model.User;
 import mvc.com.model.dto.UserCreateDto;
 import mvc.com.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,24 +42,35 @@ public class UserController {
         List<User> users = userService.getAllUsers();
         modelAndView.setViewName(users.isEmpty() ? "empty" : "get_users");
         modelAndView.addObject("users", users);
+        modelAndView.setStatus(HttpStatusCode.valueOf(200));
         return modelAndView;
     }
 
     //@RequestMapping(method = RequestMethod.GET, value = "/{id}")//гетмаппинг проще
     @GetMapping(value = "/{id}")
-    public String getUserById(@PathVariable("id") Long id, ModelMap modelMap) { // аннотация если мы хотим достать что-то из url
+    public ModelAndView getUserById(@PathVariable("id") Long id, ModelAndView modelAndView) { // аннотация если мы хотим достать что-то из url
         Optional<User> user = userService.getUserById(id);
         if (user.isPresent()) {
-            modelMap.addAttribute("user", user.get());
-            return "get_user_by_id";
+            modelAndView.setViewName("get_user_by_id");
+            modelAndView.addObject("user", user.get());
+            modelAndView.setStatus(HttpStatusCode.valueOf(200));
+            return modelAndView;
         }
-        return "empty";
+        modelAndView.setViewName("failure");
+        modelAndView.setStatus(HttpStatusCode.valueOf(404));
+        return modelAndView;
     }
 
     @PostMapping("/{id}")
-    public String deleteByUserId(@PathVariable("id") Long id, ModelMap modelMap) {
-        return userService.deleteUserById(id) ? "success" : "failure";
+    public String deleteByUserId(@PathVariable("id") Long id, HttpServletResponse response) {
+        if (userService.deleteUserById(id)) {
+            response.setStatus(204);
+            return "success";
+        }
+        response.setStatus(409);
+        return "failure";
     }
+
 
 /*    @PostMapping
     public String createUser(@RequestBody User user) { //в запросе придет тело JSON
@@ -62,22 +78,35 @@ public class UserController {
     }*/
 
     @PostMapping
-    public String createUser(@ModelAttribute @Valid UserCreateDto user, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            for (ObjectError error : bindingResult.getAllErrors()){
+    public String createUser(@ModelAttribute @Valid UserCreateDto user, BindingResult bindingResult, HttpServletResponse response) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult.getAllErrors().toString());
+
+/*            for (ObjectError error : bindingResult.getAllErrors()){
                 System.out.println(error);
             }
-            return "failure";
+            return "failure";*/
         }
-        return userService.createUser(user) ? "success" : "failure";
+        if (userService.createUser(user)) {
+            response.setStatus(201);
+            return "success";
+        }
+        response.setStatus(409);
+        return "failure";
     }
 
     @PostMapping("/update")
     public String updateUser(@RequestParam("username") String username,
                              @RequestParam("password") String password,
                              @RequestParam("id") Long id,
-                             @RequestParam("age") Integer age) {
-        return userService.updateUser(id, username, password, age) ? "success" : "failure";
+                             @RequestParam("age") Integer age,
+                             HttpServletResponse response) {
+        if (userService.updateUser(id, username, password, age)) {
+            response.setStatus(204);//не добавляем информацию
+            return "success";
+        }
+        response.setStatus(409);
+        return "failure";
     }
 
 /*    @GetMapping("/hello") //http GET method
